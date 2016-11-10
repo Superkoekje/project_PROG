@@ -1,4 +1,4 @@
-#Fietsenstalling
+#Fietsenstalling +1
 
 from tkinter import Tk, Label, Button, Entry, END, PhotoImage, Text, Scrollbar
 import csv
@@ -7,12 +7,7 @@ import threading
 import datetime
 import time
 
-"""
-antirobotbeveiliging
-telegrambeveiliging
-"""
-
-def bluebutton(buttontext, function):
+def bluebutton(buttontext, function):#Deze functie maakt een button met gegeven vorm, kleur, lettertype etc.
     button = Button(text = buttontext,
                     height = 2,
                     width = 15,
@@ -22,25 +17,25 @@ def bluebutton(buttontext, function):
                     command = function)
     return button
 
-def yellowlabel(labeltext):
+def yellowlabel(labeltext): #Deze functie maakt een label met gegeven vorm, kleur, etc.
     label = Label(text = labeltext,
                   background = 'yellow',
                   foreground = 'blue',
                   font = ('Helvetica',16))
     return label
 
-def display(index):
+def display(index): #  weergeeft de widgets in de que in een rij, in rijnummer index
     global que
     for item in que[index]:
         item.grid(row = index, column = que[index].index(item))
 
-def forget(index):
+def forget(index): #alle widgets in que vanaf rij index worden uit de window gehaald
     global que
     for item in range(index, 5):
         for subitem in que[item]:
             subitem.grid_forget()
 
-def invalidinput(index):
+def invalidinput(index): # Standaard bericht als de gebruiker input niet herkend wordt
     global que
     global invalidlabel
     invalidlabel = yellowlabel('Ongeldige invoer. Probeer opnieuw')
@@ -50,11 +45,11 @@ def invalidinput(index):
             item.delete(0, END)
     invalidlabel.grid(row = 10, columnspan = 2)
 
-def invalidpassword(index):
+def invalidpassword(index): # Bericht dat weergegeven wordt als de gebruiker herkend word maar het wachtwoord niet
     global que
     global invalidpasswordlabel
     global gebruiker
-    pogingen = str(5 - int(gebruiker[6]))
+    pogingen = str(6 - int(gebruiker[6]))
     invalidpasswordlabel = yellowlabel('Ongeldige wachtwoord. Nog '+ pogingen +' pogingen')
     que[index].append(invalidpasswordlabel)
     for item in que[index]:
@@ -62,12 +57,13 @@ def invalidpassword(index):
             item.delete(0, END)
     invalidpasswordlabel.grid(row = 10, columnspan = 2)
 
-def consequencemessage(index):
+def consequencemessage(index): # bericht weergegeven wordt als een accunt geblokkeerd wordt
+    global que
     consequencelabel = yellowlabel('Uw account is op dit moment geblokkeerd')
-    que[index] = [consequencelabel]
+    que[index].append([consequencelabel])
     consequencelabel.grid(row = 10, columnspan = 3)
 
-def get_register():
+def get_register(): # geregistreerde gebruikers worden uit de csv gehaald en in de registerlijst gestopt
     global registerList
     with open('register.csv', 'r') as f:
         reader = csv.reader(f)
@@ -76,13 +72,13 @@ def get_register():
         if i == []:
             registerList.remove(i)
 
-def update_register():
+def update_register(): # De csv word aangepast aan de inhoud van de registerlijst
     global registerList
     with open("register.csv", "w") as f:
         writer = csv.writer(f)
         writer.writerows(registerList)
 
-def maketime():
+def maketime(): # weergeeft de datum en tijd rechts bovenin de window
     global kaas
     kaas = True
     while kaas:
@@ -93,7 +89,7 @@ def maketime():
         time.sleep(10)
         label.grid_forget()
 
-def main():
+def main(): # Definieerd de window, leest de csv file, en start de window met het menu en tijd
     global root
     root = Tk()
     root.configure(background = 'yellow')
@@ -104,15 +100,13 @@ def main():
     timethread.start()
     root.mainloop()
 
-def initiate():
+def initiate(): # hoofdmenuinterface
     global que
     global titlelabel
     global stallenbutton
     global ophalenbutton
     global informatiebutton
     global overigebutton
-    global menukeuze
-    menukeuze = ''
     que =[[],[],[],[],[]]
     forget(0)
     titlelabel = yellowlabel('NS fietsenstalling      ')
@@ -120,11 +114,10 @@ def initiate():
     stallenbutton = bluebutton('Stal fiets', stallen_login)
     ophalenbutton = bluebutton('Haal fiets op', ophalen_login)
     informatiebutton = bluebutton('Informatie opvragen', informatie_login)
-    overigebutton = bluebutton('Overige', overige)
-    que[0] = [registerbutton, stallenbutton, ophalenbutton, informatiebutton, overigebutton, titlelabel]
+    que[0] = [registerbutton, stallenbutton, ophalenbutton, informatiebutton, titlelabel]
     display(0)
 
-def register():
+def register(): #registratieinterface
     forget(1)
     global naamentry
     global telefoonnummerentry
@@ -142,7 +135,7 @@ def register():
     telefoonnummerentry.grid(row = 3, column = 1)
     registerverifybutton.grid(row = 4, column = 0)
 
-def register_verify():
+def register_verify(): # leest registratieinterface, registreerd nieuwe gebruiker
     global registerList
     naam = naamentry.get()
     telefoonnummer = telefoonnummerentry.get()
@@ -171,7 +164,7 @@ def register_verify():
     except:
         invalidinput(1)
 
-def stallen_login():
+def stallen_login(): #Stallen login interface
     forget(1)
     global fietsnummerentry
     global wachtwoordentry
@@ -188,7 +181,7 @@ def stallen_login():
     wachtwoordentry.grid(row = 3, column = 1)
     loginbutton.grid(row = 4, column = 0)
 
-def ophalen_login():
+def ophalen_login(): # ophalen login interface
     forget(1)
     global fietsnummerentry
     global wachtwoordentry
@@ -205,7 +198,7 @@ def ophalen_login():
     wachtwoordentry.grid(row = 3, column = 1)
     loginbutton.grid(row = 4, column = 0)
 
-def informatie_login():
+def informatie_login(): # informatie login interface
     forget(1)
     global fietsnummerentry
     global wachtwoordentry
@@ -222,9 +215,7 @@ def informatie_login():
     wachtwoordentry.grid(row = 3, column = 1)
     loginbutton.grid(row = 4, column = 0)
 
-def stallen_verify():
-    global fietsnummer
-    global wachtwoord
+def stallen_verify(): # leest stallen login interface, checkt lege stallen, checkt gebruikersinput, roept stallen() aan
     global registerList
     global gebruiker
     if len(registerList) < 500:
@@ -237,7 +228,7 @@ def stallen_verify():
                 gebruiker = item
                 kaas = True
                 break
-        if gebruiker[6] == '5':
+        if kaas == True and gebruiker[6] == '5':
             consequencemessage(1)
             consequence()
         elif kaas == True and wachtwoord == gebruiker[3]:
@@ -252,9 +243,7 @@ def stallen_verify():
         que[1] = [vollestallinglabel]
         vollestallinglabel.grid(row = 1, columnspan = 2)
 
-def ophalen_verify():
-    global fietsnummer
-    global wachtwoord
+def ophalen_verify(): # leest ophalen login interface, checkt gebruikersinput, roept ophalen() aan
     global registerList
     global gebruiker
     kaas = False
@@ -266,7 +255,7 @@ def ophalen_verify():
             gebruiker = item
             kaas = True
             break
-    if gebruiker[6] == '5':
+    if kaas == True and gebruiker[6] == '5':
         consequencemessage(1)
         consequence()
     elif kaas == True and wachtwoord == gebruiker[3]:
@@ -277,9 +266,7 @@ def ophalen_verify():
     else:
         invalidinput(1)
 
-def informatie_verify():
-    global fietsnummer
-    global wachtwoord
+def informatie_verify(): # leest informatie login interface, checkt gebruikerinput, roept informatie aan
     global registerList
     global gebruiker
     kaas = False
@@ -291,7 +278,7 @@ def informatie_verify():
             gebruiker = item
             kaas = True
             break
-    if gebruiker[6] == '5':
+    if kaas == True and gebruiker[6] == '5':
         consequencemessage(1)
         consequence()
     elif kaas == True and wachtwoord == gebruiker[3]:
@@ -302,7 +289,7 @@ def informatie_verify():
     else:
         invalidinput(1)
 
-def stallen():
+def stallen(): # geeft stalnummer aan gebruiker, registreerd de fiets in een stal in de csv file
     forget(1)
     global registerList
     global gebruiker
@@ -326,7 +313,7 @@ def stallen():
         stallenlabel.grid(row = 1, columnspan = 2)
         update_register()
 
-def ophalen():
+def ophalen(): # opent de stal, registreerd de fiets als ongestald
     forget(1)
     global registerList
     global gebruiker
@@ -343,7 +330,7 @@ def ophalen():
         ophalenlabel.grid(row = 1, columnspan = 2)
         update_register()
 
-def informatie():
+def informatie(): # geeft de gebruiker de stalnummer, staltijd en gestalde tijd van de fiets
     forget(1)
     global gebruiker
     if gebruiker[5] == '0':
@@ -363,20 +350,16 @@ def informatie():
         stallnumberlabel.grid(row = 3, columnspan = 3)
         update_register()
 
-def overige():
-    forget(1)
-    print('overige')
-
-def consequence():
+def consequence(): # wordt aangeroepen als een gebruiker 6 mislukte inlogpogingen waagt
     global gebruiker
     global consequencegebruiker
     consequencegebruiker = gebruiker
     consequencethread = threading.Thread(target = consequenceloop)
     consequencethread.start()
 
-def consequenceloop():
+def consequenceloop(): # deblokkeerd een gebruiker na 5 minuten
     global consequencegebruiker
     time.sleep(300)
     consequencegebruiker[6]= '0'
 
-main()
+main() # start het programma
